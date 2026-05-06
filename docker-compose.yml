@@ -1,9 +1,13 @@
 services:
   app:
-    image: php:8.4-cli
+    build:
+      context: .
+      dockerfile: Dockerfile
     working_dir: /var/www
     volumes:
       - ./:/var/www
+    environment:
+      XDEBUG_MODE: coverage
     command: sh -c "php -S 0.0.0.0:8000 -t public"
     ports:
       - "8000:8000"

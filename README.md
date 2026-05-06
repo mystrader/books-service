@@ -34,14 +34,34 @@ A API estará disponível em **http://localhost:8000/api**
 Na primeira vez (ou se precisar recriar o banco):
 
 ```bash
-docker exec backend-app-1 php artisan migrate
+docker compose exec app php artisan migrate --force
 ```
 
 Isso cria todas as tabelas e a view do relatório automaticamente.
 
 ---
 
-### 3. Subir o Swagger (opcional)
+### 3. Popular com massa inicial (recomendado)
+
+```bash
+docker compose exec app php artisan db:seed --force
+```
+
+Isso popula o banco com autores, assuntos e livros via `BibliotecaSeeder`.
+
+---
+
+### 4. Validar se a API está respondendo
+
+```bash
+curl -i http://localhost:8000/api/livros
+```
+
+Esperado: status **200 OK**.
+
+---
+
+### 5. Subir o Swagger (opcional)
 
 Para explorar e testar os endpoints pelo navegador:
 
@@ -53,13 +73,21 @@ Acesse **http://localhost:8080**
 
 ---
 
-### 4. Rodar os testes
+### 6. Rodar os testes
 
 ```bash
-docker exec backend-app-1 php artisan test
+docker compose exec app php artisan test
 ```
 
 Os testes usam SQLite em memória, então rodam rápido e sem tocar no banco de desenvolvimento.
+
+### 7. Verificar cobertura de testes
+
+```bash
+docker compose exec app php artisan test --coverage
+```
+
+Cobertura total atual: **51.2%**.
 
 ---
 
@@ -138,6 +166,19 @@ Um livro pode ter múltiplos autores e múltiplos assuntos.
 
 ## O que foi construído e por quê
 
+### Defesa da arquitetura utilizada
+
+A arquitetura adotada prioriza **simplicidade operacional**, **consistência de dados** e **facilidade de avaliação técnica**:
+
+- **Laravel 11 + API REST**: entrega rápida e organizada com conventions maduras, validação robusta, Eloquent para relacionamento N:N e boa testabilidade.
+- **SQLite em arquivo único**: reduz dependências para execução local e prova técnica; evita acoplamento a um serviço externo de banco sem perder integridade relacional.
+- **Docker Compose com serviços mínimos (`app` e `swagger`)**: baixa fricção para subir ambiente e documentação com um único comando.
+- **Migrations versionadas (incluindo view)**: infraestrutura de banco reproduzível, auditável e consistente entre máquinas.
+- **Seeders determinísticos**: massa inicial pronta para demonstração funcional e validação dos endpoints sem setup manual.
+- **Controllers orientados a recurso**: endpoints claros por agregado (`livros`, `autores`, `assuntos`) e tratamento de erro alinhado a contratos HTTP (404/422/409).
+
+Essa escolha é intencional para o contexto da prova: maximizar previsibilidade de execução e clareza de manutenção, com custo de operação mínimo.
+
 ### Banco de dados
 
 Optei por **SQLite** — o banco fica em um arquivo único (`database/database.sqlite`), sem precisar subir um serviço separado de banco no Docker. Para o porte desta aplicação é mais do que suficiente, e elimina uma camada de complexidade na hora de rodar.
@@ -163,12 +204,13 @@ Durante os testes foi encontrado e corrigido um bug real: os métodos `destroy` 
 ## Estrutura de pastas
 
 ```
-backend/
+books-service/
 ├── app/
 │   ├── Http/Controllers/Api/   # LivroController, AutorController, AssuntoController, RelatorioController
 │   └── Models/                 # Livro, Autor, Assunto
 ├── database/
-│   └── migrations/             # Tabelas + view do relatório
+│   ├── migrations/             # Tabelas + view do relatório
+│   └── seeders/                # DatabaseSeeder + BibliotecaSeeder
 ├── openapi/
 │   └── openapi.yaml            # Documentação OpenAPI 3 (visualizada no Swagger)
 ├── tests/

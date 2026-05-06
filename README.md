@@ -1,3 +1,7 @@
+<img width="758" height="217" alt="image" src="https://github.com/user-attachments/assets/cf545840-852d-4dd3-9815-1544627a111c" />
+
+
+
 # Books Service — Backend
 
 API REST construída em **Laravel 11** com **PHP 8.4** para gerenciamento de um acervo de livros.

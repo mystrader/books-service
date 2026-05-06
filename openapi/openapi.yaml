@@ -1,0 +1,159 @@
+openapi: 3.0.3
+info:
+  title: Books Service API
+  version: 0.1.0
+  description: API inicial para livros, autores, assuntos e importacao Google Books.
+servers:
+  - url: http://localhost:8000
+paths:
+  /api/books:
+    get:
+      summary: Lista livros
+      responses:
+        "200":
+          description: Lista retornada com sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Book"
+    post:
+      summary: Cria livro
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BookInput"
+      responses:
+        "201":
+          description: Livro criado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Book"
+  /api/books/{id}:
+    get:
+      summary: Detalha livro por id
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Livro encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Book"
+        "404":
+          description: Livro nao encontrado
+    put:
+      summary: Atualiza livro
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BookInput"
+      responses:
+        "200":
+          description: Livro atualizado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Book"
+    delete:
+      summary: Remove livro
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Livro removido
+  /api/authors:
+    get:
+      summary: Lista autores
+      responses:
+        "200":
+          description: Lista retornada com sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Author"
+  /api/subjects:
+    get:
+      summary: Lista assuntos
+      responses:
+        "200":
+          description: Lista retornada com sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Subject"
+components:
+  schemas:
+    Book:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        publication_year:
+          type: integer
+        author_ids:
+          type: array
+          items:
+            type: integer
+        subject_ids:
+          type: array
+          items:
+            type: integer
+    BookInput:
+      type: object
+      required:
+        - title
+      properties:
+        title:
+          type: string
+        publication_year:
+          type: integer
+        author_ids:
+          type: array
+          items:
+            type: integer
+        subject_ids:
+          type: array
+          items:
+            type: integer
+    Author:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+    Subject:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string

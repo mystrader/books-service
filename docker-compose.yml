@@ -1,0 +1,18 @@
+services:
+  app:
+    image: php:8.4-cli
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+    command: sh -c "php -S 0.0.0.0:8000 -t public"
+    ports:
+      - "8000:8000"
+
+  swagger:
+    image: swaggerapi/swagger-ui:v5.17.14
+    environment:
+      SWAGGER_JSON: /openapi/openapi.yaml
+    volumes:
+      - ./openapi:/openapi
+    ports:
+      - "8080:8080"

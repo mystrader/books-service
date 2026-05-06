@@ -75,6 +75,10 @@ Acesse **http://localhost:8080**
 
 ### 6. Rodar os testes
 
+
+<img width="800" height="469" alt="CleanShot 2026-05-06 at 12 14 58" src="https://github.com/user-attachments/assets/44b8c836-5b81-41d4-9e29-a70da55da13a" />
+
+
 ```bash
 docker compose exec app php artisan test
 ```
